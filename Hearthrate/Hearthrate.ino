@@ -1,38 +1,34 @@
-#include <TFT_eSPI.h>  // Include the graphics library (this includes the sprite functions)
-#include <Wire.h>
-#include "DFRobot_MAX30102.h"
-
-TFT_eSPI tft = TFT_eSPI();  // Create object "tft"
-DFRobot_MAX30102 sensor;
-
-void setup() {
-    tft.init();
-    tft.setRotation(1);
-    tft.fillScreen(TFT_BLACK);
-    tft.setTextColor(TFT_WHITE, TFT_BLACK);
-    tft.setTextSize(2);
-
-    Wire.begin();
-    sensor.begin();
-    sensor.sensorStartCollect();
+#include <DFRobot_MAX30102.h>
+DFRobot_MAX30102 particleSensor;
+void setup()
+{
+    Serial.begin(115200);
+  while (!particleSensor.begin()) {
+    tft.drawString("MAX30102 Fail!.", 50, 120);
+    delay(1000);
+  }
+   particleSensor.sensorConfiguration(/*ledBrightness=*/60, /*sampleAverage=*/SAMPLEAVG_4, \
+                        /*ledMode=*/MODE_MULTILED, /*sampleRate=*/SAMPLERATE_100, \
+                        /*pulseWidth=*/PULSEWIDTH_411, /*adcRange=*/ADCRANGE_16384);
 }
 
-void loop() {
-    if (sensor.available()) {
-        uint32_t irValue = sensor.getIR();
-        if (irValue > 50000) {  // Check if a finger is placed on the sensor
-            int heartRate = sensor.getHeartRate();
-            tft.fillScreen(TFT_BLACK);
-            tft.setCursor(10, 10);
-            tft.print("Heart Rate: ");
-            tft.print(heartRate);
-            tft.print(" BPM");
-        } else {
-            tft.fillScreen(TFT_BLACK);
-            tft.setCursor(10, 10);
-            tft.print("No finger detected");
-        }
-    }
+int32_t SPO2; //SPO2
+int8_t SPO2Valid; //Flag to display if SPO2 calculation is valid
+int32_t heartRate; //Heart-rate
+int8_t heartRateValid; //Flag to display if heart-rate calculation is valid 
 
-    delay(1000);  // Update every second
+void loop()
+{
+  Serial.print("heartRateValid: ");
+  Serial.println(String(heartRateValid), 50, 120);
+  Serial.print("HeartRate: ");
+  Serial.println(String(heartRate), 50, 150);
+  Serial.print("SPO2Valid: ");
+  Serial.println(String(SPO2Valid), 50, 180);
+  Serial.print("SPO2: ");
+  Serial.println(String(SPO2), 50, 210);
+
+  // tft.drawString("HeartRate: "+String(heartRate)+String("      "), 50, 150);
+  // tft.drawString("SPO2Valid: "+String(SPO2Valid), 50, 180);
+  // tft.drawString("SPO2: "+String(SPO2)+String("      "), 50, 210);
 }
