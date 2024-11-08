@@ -1,10 +1,6 @@
-#include "DHT.h"
 #include <Adafruit_NeoPixel.h>
 #include <initializer_list>
-#include <TFT_eSPI.h>
 
-#define DHTPIN 0
-#define DHTTYPE DHT11
 #define PINPIXELS 2
 #define NUMPIXELS 12
 
@@ -13,19 +9,10 @@ Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PINPIXELS, NEO_GRB + NEO
 TFT_eSPI tft;
 
 void setup() {
-  dht.begin();
   pixels.begin();
   pixels.setBrightness(50);
   pixels.show();
-  Serial.begin(9600);
   initializePixels();
-  tft.begin();
-  tft.setRotation(3);
-  tft.fillScreen(TFT_BLACK);
-  tft.setTextColor(TFT_RED,TFT_BLACK);
-  tft.setTextSize(2);
-  tft.drawString("DHT",80,20);
-  tft.setTextColor(TFT_WHITE,TFT_BLACK);
 }
 
 void initializePixels() {
@@ -72,12 +59,7 @@ void setPixels(std::initializer_list<int> indices, std::initializer_list<uint32_
 }
 
 void loop() {
-  float temp = dht.readTemperature();
-  float humi = dht.readHumidity();
-
-  setTemperaturePixels(temp);
-  tft.drawString("Temp: " + String(temp) + " C   ",80,100);
-  tft.drawString("Humi: " + String(humi) + " %   ",80,120);
-
+  int randNum = random(24, 35);
+  setTemperaturePixels(randNum);
   delay(500);
 }
