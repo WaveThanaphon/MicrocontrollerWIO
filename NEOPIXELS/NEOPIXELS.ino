@@ -4,9 +4,7 @@
 #define PINPIXELS 2
 #define NUMPIXELS 12
 
-DHT dht(DHTPIN, DHTTYPE);
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PINPIXELS, NEO_GRB + NEO_KHZ800);
-TFT_eSPI tft;
 
 void setup() {
   pixels.begin();
