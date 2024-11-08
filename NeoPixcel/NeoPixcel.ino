@@ -9,20 +9,26 @@ void setup()
 }
 void loop() 
 {
-   // for(int i=0;i<NUMPIXELS;i++) // วนลูปเปลี่ยนสีของ LED
-   // {
-   //    pixels.setPixelColor(i, pixels.Color(255,0,0));   // แสดงสีแดง
-   //    pixels.show();    // สั่งให้แสดงสีที่เลือก
-   // }
-   // delay(1000); 
-   static unsigned long lastUpdate = 0;
-   unsigned long currentMillis = millis();
+   unsigned long previousMillis = 0;
+   const long interval = 1000;
+   int colorIndex = 0;
+   uint32_t colors[] = {pixels.Color(255, 0, 0), pixels.Color(0, 255, 0), pixels.Color(0, 0, 255)};
 
-   if (currentMillis - lastUpdate >= 1000) {
-      for(int i=0;i<NUMPIXELS;i++) {
-         pixels.setPixelColor(i, pixels.Color(0,255,0));   // แสดงสีเขียว
-         pixels.show();    // สั่งให้แสดงสีที่เลือก
+   while (true) {
+      unsigned long currentMillis = millis();
+
+      if (currentMillis - previousMillis >= interval) {
+         previousMillis = currentMillis;
+
+         for (int i = 0; i < NUMPIXELS; i++) {
+            pixels.setPixelColor(i, colors[colorIndex]);
+         }
+         pixels.show();
+
+         colorIndex++;
+         if (colorIndex >= 3) {
+            colorIndex = 0;
+         }
       }
-      lastUpdate = currentMillis;
    }
 }
