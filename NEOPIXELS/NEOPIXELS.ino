@@ -1,8 +1,8 @@
 #include <Adafruit_NeoPixel.h>
 
-#define PIN            6  // Pin where the NeoPixels are connected
+#define PIN            2  // Pin where the NeoPixels are connected
 #define NUMPIXELS      16 // Number of NeoPixels
-#define BUTTON_PIN     2  // Pin where the button is connected
+#define BUTTON_PIN     4  // Pin where the button is connected
 
 Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 

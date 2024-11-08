@@ -2,8 +2,10 @@
 
 TFT_eSPI tft;
 
-Void setup(){
+void setup(){
+    tft.begin();
     tft.setRotation(3);
+    tft.fillScreen(TFT_BLACK);
     tft.setTextColor(TFT_RED,TFT_BLACK);
     tft.setTextSize(2);
     tft.drawString("DHT",80,20);
@@ -11,6 +13,6 @@ Void setup(){
     tft.setTextColor(TFT_WHITE,TFT_BLACK);
 }
 
-Void loop(){
-    
+void loop(){
+
 }
