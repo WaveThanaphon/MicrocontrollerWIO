@@ -1,51 +1,83 @@
+#include "DHT.h"
 #include <Adafruit_NeoPixel.h>
+#include <initializer_list>
+#include <TFT_eSPI.h>
 
-#define PIN            2  // Pin where the NeoPixels are connected
-#define NUMPIXELS      16 // Number of NeoPixels
-#define BUTTON_PIN     4  // Pin where the button is connected
+#define DHTPIN 0
+#define DHTTYPE DHT11
+#define PINPIXELS 2
+#define NUMPIXELS 12
 
-Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
-
-bool buttonState = false;
-bool lastButtonState = false;
-int colorIndex = 0;
+DHT dht(DHTPIN, DHTTYPE);
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PINPIXELS, NEO_GRB + NEO_KHZ800);
+TFT_eSPI tft;
 
 void setup() {
-    pinMode(BUTTON_PIN, INPUT_PULLUP); // Set button pin as input with internal pull-up resistor
-    pixels.begin(); // Initialize the NeoPixel library
-    pixels.show();  // Initialize all pixels to 'off'
+  dht.begin();
+  pixels.begin();
+  pixels.setBrightness(50);
+  pixels.show();
+  Serial.begin(9600);
+  initializePixels();
+  tft.begin();
+  tft.setRotation(3);
+  tft.fillScreen(TFT_BLACK);
+  tft.setTextColor(TFT_RED,TFT_BLACK);
+  tft.setTextSize(2);
+  tft.drawString("DHT",80,20);
+  tft.setTextColor(TFT_WHITE,TFT_BLACK);
+}
+
+void initializePixels() {
+  // Initial pixel colors
+  pixels.setPixelColor(5, pixels.Color(255, 0, 0));
+  pixels.setPixelColor(6, pixels.Color(0, 255, 0));
+  pixels.show();
+}
+
+void setTemperaturePixels(float temp) {
+  pixels.clear();
+  setPixels({ 6, 5 }, { pixels.Color(100, 255, 100), pixels.Color(255, 100, 100) });
+
+  if (temp >= 31 && temp < 32) {
+    setPixels({ 4 }, { pixels.Color(85, 255, 0) });
+  } else if (temp >= 32 && temp < 33) {
+    setPixels({ 4, 3 }, { pixels.Color(85, 255, 0), pixels.Color(166, 255, 0) });
+  } else if (temp >= 33 && temp < 34) {
+    setPixels({ 4, 3, 2 }, { pixels.Color(85, 255, 0), pixels.Color(166, 255, 0), pixels.Color(255, 255, 0, 0) });
+  } else if (temp >= 34 && temp < 35) {
+    setPixels({ 4, 3, 2, 1 }, { pixels.Color(85, 255, 0), pixels.Color(166, 255, 0), pixels.Color(255, 255, 0, 0), pixels.Color(255, 153, 0) });
+  } else if (temp >= 35) {
+    setPixels({ 4, 3, 2, 1, 0 }, { pixels.Color(85, 255, 0), pixels.Color(166, 255, 0), pixels.Color(255, 255, 0, 0), pixels.Color(255, 153, 0), pixels.Color(255, 0, 0) });
+  } else if (temp >= 29 && temp < 30) {
+    setPixels({ 7 }, { pixels.Color(0, 255, 213) });
+  } else if (temp >= 28 && temp < 29) {
+    setPixels({ 8, 7 }, { pixels.Color(0, 255, 247), pixels.Color(0, 255, 213) });
+  } else if (temp >= 27 && temp < 28) {
+    setPixels({ 9, 8, 7 }, { pixels.Color(0, 213, 255), pixels.Color(0, 255, 247), pixels.Color(0, 255, 213) });
+  } else if (temp >= 26 && temp < 27) {
+    setPixels({ 10, 9, 8, 7 }, { pixels.Color(0, 166, 255), pixels.Color(0, 213, 255), pixels.Color(0, 255, 247), pixels.Color(0, 255, 213) });
+  } else {
+    setPixels({ 11, 10, 9, 8, 7 }, { pixels.Color(0, 98, 255), pixels.Color(0, 166, 255), pixels.Color(0, 213, 255), pixels.Color(0, 255, 247), pixels.Color(0, 255, 213) });
+  }
+
+  pixels.show();
+}
+
+void setPixels(std::initializer_list<int> indices, std::initializer_list<uint32_t> colors) {
+  auto color = colors.begin();
+  for (int index : indices) {
+    pixels.setPixelColor(index, *color++);
+  }
 }
 
 void loop() {
-    buttonState = digitalRead(BUTTON_PIN);
+  float temp = dht.readTemperature();
+  float humi = dht.readHumidity();
 
-    if (buttonState == LOW && lastButtonState == HIGH) {
-        colorIndex++;
-        if (colorIndex > 2) {
-            colorIndex = 0;
-        }
-        setColor(colorIndex);
-    }
+  setTemperaturePixels(temp);
+  tft.drawString("Temp: " + String(temp) + " C   ",80,100);
+  tft.drawString("Humi: " + String(humi) + " %   ",80,120);
 
-    lastButtonState = buttonState;
-}
-
-void setColor(int index) {
-    uint32_t color;
-    switch (index) {
-        case 0:
-            color = pixels.Color(255, 0, 0); // Red
-            break;
-        case 1:
-            color = pixels.Color(0, 255, 0); // Green
-            break;
-        case 2:
-            color = pixels.Color(0, 0, 255); // Blue
-            break;
-    }
-
-    for (int i = 0; i < NUMPIXELS; i++) {
-        pixels.setPixelColor(i, color);
-    }
-    pixels.show();
+  delay(500);
 }
