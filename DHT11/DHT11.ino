@@ -9,13 +9,13 @@ void setup() {
 }
 
 void loop() {
-    float humi = dht.readHumidity();
-    float temp = dht.readTemperature();
-    Serial.print("Humidity: ");
-    Serial.print(humi);
-    Serial.println(" %");
-    Serial.print("Temperature: ");
-    Serial.print(temp);
-    Serial.println(" C");
-    delay(200);
+  float humi = dht.readHumidity();
+  float temp = dht.readTemperature();
+  Serial.print("Humidity: ");
+  Serial.print(humi);
+  Serial.println(" %");
+  Serial.print("Temperature: ");
+  Serial.print(temp);
+  Serial.println(" C");
+  delay(200);
 }

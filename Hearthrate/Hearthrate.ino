@@ -4,7 +4,7 @@ void setup()
 {
     Serial.begin(115200);
   while (!particleSensor.begin()) {
-    tft.drawString("MAX30102 Fail!.", 50, 120);
+    //tft.drawString("MAX30102 Fail!.", 50, 120);
     delay(1000);
   }
    particleSensor.sensorConfiguration(/*ledBrightness=*/60, /*sampleAverage=*/SAMPLEAVG_4, \
@@ -20,13 +20,14 @@ int8_t heartRateValid; //Flag to display if heart-rate calculation is valid
 void loop()
 {
   Serial.print("heartRateValid: ");
-  Serial.println(String(heartRateValid), 50, 120);
+  Serial.println(heartRateValid);
   Serial.print("HeartRate: ");
-  Serial.println(String(heartRate), 50, 150);
+  Serial.println(heartRate);
   Serial.print("SPO2Valid: ");
-  Serial.println(String(SPO2Valid), 50, 180);
+  Serial.println(SPO2Valid);
   Serial.print("SPO2: ");
-  Serial.println(String(SPO2), 50, 210);
+  Serial.println(SPO2);
+  delay(200);
 
   // tft.drawString("HeartRate: "+String(heartRate)+String("      "), 50, 150);
   // tft.drawString("SPO2Valid: "+String(SPO2Valid), 50, 180);
