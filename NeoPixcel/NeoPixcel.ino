@@ -17,12 +17,14 @@ void loop() {
       pixels.setPixelColor(i, pixels.Color(0, 255, 0));  // Green
     } else if (currentColor == 2) {
       pixels.setPixelColor(i, pixels.Color(0, 0, 255));  // Blue
+   } else if (currentColor == 3) {
+     pixels.setPixelColor(i, pixels.Color(255, 20, 147));  // Pink
     }
   }
   pixels.show();
   delay(1000);
   currentColor++;
-  if (currentColor > 2) {
+  if (currentColor > 3) {
     currentColor = 0;
   }
 }
